@@ -11,27 +11,25 @@ import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import kotlin.random.Random
 
 /**
  * All icons used in this application are from the following source:
  * https://www.flaticon.com/
  */
-class MainActivity : AppCompatActivity() {
+class OneArmedBandit : AppCompatActivity() {
 
     // Changes the amount of fruits to randomly pick from.
     // Lower numbers higher the chance of a win.
     // Max value = 6
-    private val CFG_AMOUNT_OF_FRUITS = 3
+    private var CFG_AMOUNT_OF_FRUITS = 6
     // Controls how many repetitions the spin will move.
     // Higher numbers equals to a longer spin-time
     // Min: 5, Default: 15
     private val CFG_AMOUNT_OF_REPETITIONS = 15
 
-    // Array containing the ressource id of all fruit images
+    // Array containing the resource id of all fruit images
     private val mipmapIds: IntArray = intArrayOf(
         R.mipmap.fruit_apple_foreground,
         R.mipmap.fruit_lemon_foreground,
@@ -62,11 +60,20 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         log("onCreate has been called!")
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_onearmedbandit)
         initialize()
     }
 
     private fun initialize() {
+        // Hides the actionbar completely to give the app a more clean look
+        supportActionBar?.hide()
+        // Handles the event for the checkbox to quickly change the amount of fruits chosen from
+        // By switching between 3 and 6 fruits you can change the possibility to win by a lot
+        findViewById<CheckBox>(R.id.cb_simplyfy).setOnClickListener(View.OnClickListener {
+            CFG_AMOUNT_OF_FRUITS = if(CFG_AMOUNT_OF_FRUITS == 6) 3 else 6
+            Toast.makeText(this, "The amount of fruits is now $CFG_AMOUNT_OF_FRUITS",
+                Toast.LENGTH_LONG).show()
+        })
         findViewById<Button>(R.id.btn_spin).setOnClickListener {
             // If there is not already a spin running, start a new one
             if (!isSpinning()) {
@@ -134,7 +141,7 @@ class MainActivity : AppCompatActivity() {
         getViewByName<ImageView>("spin_icon_" + (rowId+1)).setImageResource(oldMipMapIDs[1][rowId])
         oldMipMapIDs[1][rowId] = mipmapIds[randomValues[rowId]]
         getViewByName<ImageView>("spin_icon_top_" + (rowId+1)).setImageResource(oldMipMapIDs[1][rowId])
-        log("ID for middle icon in row $rowId is now ${oldMipMapIDs[1][rowId]}!")
+        log("ID for middle icon in column $rowId is now ${oldMipMapIDs[1][rowId]}!")
     }
 
     // Updates all views displaying the statistics
@@ -191,7 +198,7 @@ class MainActivity : AppCompatActivity() {
 
     // Logs a given message
     private fun log(msg: String) {
-        Log.d("[LOG]", msg)
+        Log.d("[LOG-OAB]", msg)
     }
 
 }
